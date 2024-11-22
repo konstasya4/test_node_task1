@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const { Client } = require("pg");
 
 const client = new Client({
   user: "postgres",
@@ -12,14 +12,22 @@ client.connect();
 
 module.exports = {
   insert: async (table, data) => {
-    const columns = Object.keys(data).join(', ');
-    const values = Object.values(data).map((_, i) => `$${i + 1}`).join(', ');
+    const columns = Object.keys(data).join(", ");
+    const values = Object.values(data)
+      .map((_, i) => `$${i + 1}`)
+      .join(", ");
     const query = `INSERT INTO ${table} (${columns}) VALUES (${values}) RETURNING *`;
     const result = await client.query(query, Object.values(data));
     return result.rows[0];
   },
 
-  find: async (table, filters = {}, dateConditions = {}, limit = 10, offset = 0) => {
+  find: async (
+    table,
+    filters = {},
+    dateConditions = {},
+    limit = 10,
+    offset = 0
+  ) => {
     let query = `SELECT * FROM ${table}`;
     const conditions = [];
     const values = [];
@@ -39,10 +47,12 @@ module.exports = {
     }
 
     if (conditions.length > 0) {
-      query += ` WHERE ${conditions.join(' AND ')}`;
+      query += ` WHERE ${conditions.join(" AND ")}`;
     }
 
-    query += ` ORDER BY date DESC LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+    query += ` ORDER BY date DESC LIMIT $${values.length + 1} OFFSET $${
+      values.length + 2
+    }`;
     values.push(limit, offset);
 
     const result = await client.query(query, values);
