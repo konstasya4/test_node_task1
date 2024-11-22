@@ -79,8 +79,7 @@
     plu VARCHAR(50),
     shop_id INT,
     date TIMESTAMP DEFAULT NOW()
-);
-   );
+    );
    ```
 
 ---
